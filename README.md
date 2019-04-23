@@ -11,6 +11,10 @@ When the script is run, it will prompt you to set the following values:
 * Enable/Disable automatic firewall port forwarding
 * Enable/Disable automatic granting of all guides to players having joined since the last restart
 
+## Extras
+* `join_local_server.cmd` - This script is created to facilitate joining your new local server.
+* `remove_upnp.cmd` - This script may be used to manually remove UPnP forwards created by the `start_server.cmd` script.
+
 ## Scary stuff
 The script (see below) will download executable binaries *from the Internet*. These include:
  * `steamcmd.exe`, from [Valve](https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip)
