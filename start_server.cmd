@@ -17,7 +17,7 @@ echo CONFIG: The servername will be: %SERVERNAME%
 goto :eof
 
 :setfirewall
-if exist "%VARIABLESDIR%\upnp.txt" (
+if exist "%VARIABLESDIR%\enableupnp.txt" (
   set /p ENABLEUPNP=<"%VARIABLESDIR%\enableupnp.txt"
 ) else (
   echo To allow your server to be found in the game server browser you need to open
@@ -113,6 +113,11 @@ if not exist "%MISSERVERBIN%" (
 if /I "%ENABLEUPNP%"=="y" (
   echo =^> Using UPnP to forward firewall ports...
   call :setupnp
+)
+if not exist join_local_server.cmd (
+  echo =^> Creating join_local_server.cmd script...
+  echo ^@echo off > join_local_server.cmd
+  echo explorer steam://run/299740/connect/+connect 127.0.0.1 64090 >> join_local_server.cmd
 )
 "%MISSERVERBIN%" %OPTIONS% +sv_maxplayers %MAXPLAYERS% +map islands +sv_servername "%SERVERNAME%" +http_startserver
 if /I "%ENABLEUPNP%"=="y" (
