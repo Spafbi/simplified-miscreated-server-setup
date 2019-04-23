@@ -2,7 +2,7 @@
 This simplified startup process will prompt you for some basic server variables (server name, max number of players, RCON password, and whether or not to enable the whitelist), store the variables for later use, download `steamcmd.exe` from Valve, use `steamcmd.exe` to download and install the Miscreated server, download upnpc from the MiniUPnP Project to automatically open the requisite firewall ports, and finally start the server process using the configure variables.
 
 This script has only been tested on Windows 10 v1809
-## Configurable options
+### Configurable options
 When the script is run, it will prompt you to set the following values:
 * Server name
 * Maximum players supported by the server
@@ -11,7 +11,7 @@ When the script is run, it will prompt you to set the following values:
 * Enable/Disable automatic firewall port forwarding
 * Enable/Disable automatic granting of all guides to players having joined since the last restart
 
-## Extras
+### Extras
 * `join_local_server.cmd` - This script is created to facilitate joining your new local server.
 * `remove_upnp.cmd` - This script may be used to manually remove UPnP forwards created by the `start_server.cmd` script.
 
