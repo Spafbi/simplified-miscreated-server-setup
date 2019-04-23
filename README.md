@@ -5,9 +5,10 @@ This script has only been tested on Windows 10 v1809
 ## Scary stuff
 The script (see below) will download executable binaries *from the Internet*. These include:
  * `steamcmd.exe`, from [Valve](https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip)
+ * `sqlite3`, from the [SQLite Consortium](https://www.sqlite.org/download.html)
  * `upnpc`, from the [MiniUPnP Project](http://miniupnp.tuxfamily.org/files/download.php?file=upnpc-exe-win32-20150918.zip)
 
-`steamcmd.exe` is used to download and update the Miscreated server. `upnpc` is used to automatically forward firewall ports to your Miscreated server instance.
+`steamcmd.exe` is used to download and update the Miscreated server. `sqlite3` is used optionally to grant all guides to all players upon each server restart. `upnpc` is used to automatically forward firewall ports to your Miscreated server instance.
 
 The script also leverages PowerShell to unzip the executables downloaded.
 
