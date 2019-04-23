@@ -16,6 +16,26 @@ echo %SERVERNAME%>"%VARIABLESDIR%\server_name.txt"
 echo CONFIG: The servername will be: %SERVERNAME%
 goto :eof
 
+:giveallguides
+if exist "%VARIABLESDIR%\grantguides.txt" (
+  set /p GRANTGUIDES=<"%VARIABLESDIR%\grantguides.txt"
+) else (
+  echo Would you like to grant guides to all players joining the server since the last
+  echo restart? Enter Y for yes, N for no.
+  set /p GRANTGUIDES="Grant guides to new players [Y/N]: " || set GRANTGUIDES=DONTJUSTPRESSENTER
+)
+if /I "%GRANTGUIDES%"=="y" (
+  echo CONFIG: Guides will be granted to all players.
+) else if /I "%GRANTGUIDES%"=="n" (
+  echo CONFIG: Guides will NOT be granted to all players.
+) else (
+  echo Please enter Y for yes, or N for no.
+  echo.
+  goto giveallguides
+)
+echo %GRANTGUIDES%>"%VARIABLESDIR%\grantguides.txt"
+goto :eof
+
 :setfirewall
 if exist "%VARIABLESDIR%\enableupnp.txt" (
   set /p ENABLEUPNP=<"%VARIABLESDIR%\enableupnp.txt"
@@ -102,6 +122,11 @@ goto :eof
 :start
 echo.
 echo.
+if /I "%GRANTGUIDES%"=="y" (
+  if exist "%SERVERDIR%\miscreated.db" (
+    call :grantallguides
+  )
+)
 "%STEAMCMDBIN%" +login anonymous +force_install_dir %SERVERDIR% +app_update 302200 validate +quit
 set MISSERVERBIN=%SERVERDIR%\Bin64_dedicated\MiscreatedServer.exe
 if not exist "%MISSERVERBIN%" (
@@ -130,7 +155,24 @@ goto start
 set STEAMARCHIVE="%BASEPATH%\steamcmd.zip"
 curl -L https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -o "%STEAMARCHIVE%"
 @powershell Expand-Archive -LiteralPath "%STEAMARCHIVE%" -DestinationPath "%STEAMCMDPATH%"
+del /q *.zip
 goto :eof
+
+:getsqlite3
+set SQLITELIBZIP="%BASEPATH%\sqlite-dll-win32-x86-3280000.zip"
+set SQLITEBINZIP="%BASEPATH%\sqlite-tools-win32-x86-3280000.zip"
+curl -L https://sqlite.org/2019/sqlite-dll-win32-x86-3280000.zip -o "%SQLITELIBZIP%"
+curl -L https://sqlite.org/2019/sqlite-tools-win32-x86-3280000.zip -o "%SQLITEBINZIP%"
+@powershell Expand-Archive -LiteralPath "%SQLITELIBZIP%" -DestinationPath "%SQLITEPATH%"
+@powershell Expand-Archive -LiteralPath "%SQLITEBINZIP%" -DestinationPath "%SQLITEPATH%"
+move "%SQLITEPATH%\sqlite-tools-win32-x86-3280000\*.*" "%SQLITEPATH%\"
+rmdir "%SQLITEPATH%\sqlite-tools-win32-x86-3280000"
+del /q *.zip
+goto :eof
+
+:grantallguides
+echo ==^> Granting guides to all players...
+echo UPDATE ServerAccountData SET Guide00=16777215, Guide01=16777215, Guide02=16777215, Guide03=16777215;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
 
 :setupnp
 "%UNPNCHELPER%\upnpc-shared.exe" -r 64090 UDP 64091 UDP 64092 UDP 64093 UDP 64094 TCP
@@ -201,6 +243,18 @@ if not exist "%STEAMCMDBIN%" (
   call :getsteamcmd
 )
 
+set SQLITEPATH=%BASEPATH%\sqlite
+set SQLITEBIN=%SQLITEPATH%\sqlite3.exe
+
+if not exist "%SQLITEPATH%" (
+  echo Creating directory: "%SQLITEPATH%"...
+  md "%SQLITEPATH%"
+)
+
+if not exist "%SQLITEBIN%" (
+  call :getsqlite3
+)
+
 set OPTIONS=%WHITELISTED%
 if defined OPTIONS (
   echo Additional command line options: %OPTIONS%
@@ -212,6 +266,8 @@ if not exist "%UNPNCHELPER%" (
   md "%UNPNCHELPER%"
   call :getupnphelper
 )
+
+call :giveallguides
 
 call :createmanualremoveupnpscript
 
