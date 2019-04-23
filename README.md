@@ -12,7 +12,7 @@ The script (see below) will download executable binaries *from the Internet*. Th
 The script also leverages PowerShell to unzip the executables downloaded.
 
 ## Installation steps
-1. Right-mouse-click and save this script to your system (*Save link as...*): [start_server.cmd](https://github.com/Spafbi/simplified-miscreated-server-setup/releases/download/v1.0a/start_server.cmd)
+1. Save this script to your system: [start_server.cmd](https://github.com/Spafbi/simplified-miscreated-server-setup/releases/download/v1.0a/start_server.cmd)
 1. Create a folder where you would like to download and install the Miscreated server. It's best to keep the path to where you want to install the server short, with no spaces, and using only ASCII characters. Example: `C:\Games\MiscreatedServer`
 1. Copy and paste the `start_server.cmd` file you downloaded to the folder you created in the preceding step.
 1. Run the `start_server.cmd` file and answer any prompts which may appear. Necessary downloads will occur and the server will automatically start using the values you specified in the prompts. The server will automatically restart in the event it was shut down.
