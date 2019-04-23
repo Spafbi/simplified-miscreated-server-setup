@@ -32,15 +32,14 @@ The server in this configuration uses a port range of 64090-64094. This script m
 ## Connecting to your server to play
 A few minutes after starting up you should be able to see your server in the Miscreated server browser. If you cannot see your server it is likely a local network configuration is not fully compatible with UPnP.
 
-If the ports were not automatically opened for you, then you will need to figure out how to open them if you wish for others to be able to play on your server. If you don't care about this and just want to play by yourself, then you will need to launch Miscreated using the +connect switch. To do this, you will need to locate your Miscreated.exe binary. Press WIN+R (Windows key and R at the same time) to open the run dialog. Use `Browse` to locate the Miscreated.exe executable; this is often located in `C:\Program Files\Steam\steamapps\common\Miscreated`, but may be located elsewhere on your system. Once you find the executable, select it and click `Open`. The full path to the Miscreated.exe file will now be listed on the `Open` line of the run dialog. After `Miscreated.exe` add ` +connect 127.0.0.1`. The `Open` line should now look similar to this:
-```
-C:\Program Files\Steam\steamapps\common\Miscreated\Miscreated.exe +connect 127.0.0.1
-```
-Click `OK` and you will join to your local server.
+If the ports were not automatically opened for you, then you will need to figure out how to open them if you wish for others to be able to play on your server. If you don't care about this and just want to play by yourself, a `join_local_server.cmd` script was created which you can execute to join your local server. This will open Steam and you will need to confirm you want to join the server.
+
 ### But what if server is on another computer on my network and my ports were't forwarded?
-In that case, you would simply need to change `127.0.0.1` in the above example to the IP address of other computer running the server. If the other computer's IP address is `192.168.1.103`, then you would change the above example to look like this:
+In that case, you will need to launch Miscreated using the +connect switch. To do this, you will need to locate your Miscreated.exe binary. Press WIN+R (Windows key and R at the same time) to open the run dialog. Use `Browse` to locate the Miscreated.exe executable; this is often located in `C:\Program Files\Steam\steamapps\common\Miscreated`, but may be located elsewhere on your system. Once you find the executable, select it and click `Open`. The full path to the Miscreated.exe file will now be listed on the `Open` line of the run dialog. After `Miscreated.exe` add ` +connect 192.168.1.103`. The `Open` line should now look similar to this:
 ```
 C:\Program Files\Steam\steamapps\common\Miscreated\Miscreated.exe +connect 192.168.1.103
 ```
+Be sure to change `192.168.1.103` to the internal network IP address of the computer running the Miscreated server.
+
 ## Manually removing the UPnP port mappings
 If you wish to ensure the UPnP port mappings are removed after closing your server, execute the `remove_upnp.cmd` file which was automatically created in the same directory as the `start_server.cmd` file.
