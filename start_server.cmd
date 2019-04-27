@@ -182,7 +182,7 @@ goto start
 if not exist join_local_server.cmd (
 echo [1m[33m[4mCreating join_local_server.cmd script[0m
   echo ^@echo off > join_local_server.cmd
-  echo explorer steam://run/299740/connect/+connect 127.0.0.1 64090 >> join_local_server.cmd
+  echo explorer steam://run/299740/connect/+connect 127.0.0.1 %GAMEPORTA% >> join_local_server.cmd
 )
 echo.
 goto :eof
