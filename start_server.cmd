@@ -171,9 +171,10 @@ if /I "%ENABLEUPNP%"=="y" (
   call :setupnp
 )
 call :createlocaljoin
-pause
 call :validateserver
 call :startserver
+echo.
+echo [1m[33m[4mThe Miscreated server gracefully exited. Restarting...[0m
 goto start
 
 
