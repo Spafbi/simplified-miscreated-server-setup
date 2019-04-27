@@ -4,6 +4,7 @@ set BASEPATH=%~dp0
 set BASEPATH=%BASEPATH:~0,-1%
 goto setup
 
+
 :setservername
 if exist "%VARIABLESDIR%\server_name.txt" (
   set /p SERVERNAME=<"%VARIABLESDIR%\server_name.txt"
@@ -15,6 +16,7 @@ if "%SERVERNAME%"=="DONTJUSTPRESSENTER" goto setservername
 echo %SERVERNAME%>"%VARIABLESDIR%\server_name.txt"
 echo CONFIG: The servername will be: %SERVERNAME%
 goto :eof
+
 
 :giveallguides
 if exist "%VARIABLESDIR%\grantguides.txt" (
@@ -36,6 +38,7 @@ if /I "%GRANTGUIDES%"=="y" (
 echo %GRANTGUIDES%>"%VARIABLESDIR%\grantguides.txt"
 goto :eof
 
+
 :setfirewall
 if exist "%VARIABLESDIR%\enableupnp.txt" (
   set /p ENABLEUPNP=<"%VARIABLESDIR%\enableupnp.txt"
@@ -52,10 +55,11 @@ if /I "%ENABLEUPNP%"=="y" (
 ) else (
   echo Please enter Y for yes, or N for no.
   echo.
-  goto setupnp
+  goto setfirewall
 )
 echo %ENABLEUPNP%>"%VARIABLESDIR%\enableupnp.txt"
 goto :eof
+
 
 :setwhitelisted
 if exist "%VARIABLESDIR%\whitelisted.txt" (
@@ -76,6 +80,7 @@ if /I "%WHITELISTED%"=="y" (
 )
 echo %WHITELISTED%>"%VARIABLESDIR%\whitelisted.txt"
 goto :eof
+
 
 :setmaxplayers
 if exist "%VARIABLESDIR%\maxplayers.txt" (
@@ -98,6 +103,7 @@ echo %MAXPLAYERS%>"%VARIABLESDIR%\maxplayers.txt"
 echo CONFIG: The maximum number of players will be set to: %MAXPLAYERS%
 goto :eof
 
+
 :setrconpassword
 if exist "%VARIABLESDIR%\rcon_password.txt" (
   set /p RCONPASS=<"%VARIABLESDIR%\rcon_password.txt"
@@ -118,6 +124,7 @@ if not exist "%SERVERDIR%\hosting.cfg" (
 )
 echo.
 goto :eof
+
 
 :start
 echo.
@@ -151,12 +158,14 @@ if /I "%ENABLEUPNP%"=="y" (
 )
 goto start
 
+
 :getsteamcmd
 set STEAMARCHIVE="%BASEPATH%\steamcmd.zip"
 curl -L https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -o "%STEAMARCHIVE%"
 @powershell Expand-Archive -LiteralPath "%STEAMARCHIVE%" -DestinationPath "%STEAMCMDPATH%"
 del /q *.zip
 goto :eof
+
 
 :getsqlite3
 set SQLITELIBZIP="%BASEPATH%\sqlite-dll-win32-x86-3280000.zip"
@@ -170,13 +179,17 @@ rmdir "%SQLITEPATH%\sqlite-tools-win32-x86-3280000"
 del /q *.zip
 goto :eof
 
+
 :grantallguides
 echo ==^> Granting guides to all players...
 echo UPDATE ServerAccountData SET Guide00=16777215, Guide01=16777215, Guide02=16777215, Guide03=16777215;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
+goto :eof
+
 
 :setupnp
 "%UNPNCHELPER%\upnpc-shared.exe" -r 64090 UDP 64091 UDP 64092 UDP 64093 UDP 64094 TCP
 goto :eof
+
 
 :removeupnp
 "%UNPNCHELPER%\upnpc-shared.exe" -N 64094 64094 TCP
@@ -198,11 +211,13 @@ echo upnpc\upnpc-shared.exe -L>> remove_upnp.cmd
 echo pause>> remove_upnp.cmd
 goto :eof
 
+
 :getupnphelper
 set UPNPCARCHIVE="%BASEPATH%\upnpc-exe-win32-20150918.zip"
 curl -L http://miniupnp.tuxfamily.org/files/download.php?file=upnpc-exe-win32-20150918.zip -o "%UPNPCARCHIVE%"
 @powershell Expand-Archive -LiteralPath "%UPNPCARCHIVE%" -DestinationPath "%UNPNCHELPER%"
 goto :eof
+
 
 :setup
 REM - Make sure a script variables directory exists
@@ -221,6 +236,7 @@ if /I %WHITELISTED%=="y" (
   set WHITELISTED=
 )
 call :setmaxplayers
+
 
 set SERVERDIR=%BASEPATH%\MiscreatedServer
 
