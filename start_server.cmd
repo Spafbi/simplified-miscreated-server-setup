@@ -219,7 +219,7 @@ echo                 The servername will be: [1m[33m[4m%SERVERNAME%[0m
 echo  The maximum number of players will be: [1m[33m[4m%MAXPLAYERS%[0m
 echo      The base game server port will be: [1m[33m[4m%GAMEPORTA%[0m
 echo.
-echo              [1m[31mNOTICE[0m! Your RCON port is: [1m[33m[4m%RCONPORT%[0m
+echo              [1m[31mNOTICE![0m Your RCON port is: [1m[33m[4m%RCONPORT%[0m
 echo.
 
 if /I "%GRANTGUIDES%"=="y" (
@@ -271,7 +271,7 @@ goto :eof
 
 
 :grantallguides
-echo [1m[33m[4mGranting guides to all players[0m
+echo [1m[33m[4mGranting guides to all existing players[0m
 echo UPDATE ServerAccountData SET Guide00=16777215, Guide01=16777215, Guide02=16777215, Guide03=16777215;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
 echo.
 goto :eof
