@@ -6,7 +6,7 @@ This script has only been tested on Windows 10 v1809
 When the script is run, it will prompt you to set the following values:
 * Server name
 * Maximum players supported by the server
-* Set the default base port
+* Default base game port
 * RCON password
 * Enable/Disable the whitelist option
 * Enable/Disable automatic firewall port forwarding
