@@ -42,7 +42,7 @@ Any time you wish to start the server after the first time, just execute the `st
 The first time you started the server using the `start_server.cmd` the values you entered were saved in respective files in the `scriptvars` folder. If you wish to change any of the values, you may either edit the file directly, or delete the file. For example, to change your server's name, edit or delete the `scriptvars\server_name.txt` file.
 
 ## Firewall ports
-The server in this configuration uses a port range of 64090-64094. This script makes use of UPnP features available on most routers and *should* automatically forward the correct ports to your server, but only if you choose to allow it. If you do not choose to allow automatic port forwarding then you will need to manually forward firewall ports to your server. You will need to forward 64090-64094 for both TCP and UDP.
+The server in this configuration uses a default port range of 64090-64094. This script makes use of UPnP features available on most routers and *should* automatically forward the correct ports to your server, but only if you choose to allow it. If you do not choose to allow automatic port forwarding then you will need to manually forward firewall ports to your server. If using the default ports, you will need to forward 64090-64094 for both TCP and UDP, otherwise forward your chosen base port number through base port number + 4.
 
 ## Connecting to your server to play
 A few minutes after starting up you should be able to see your server in the Miscreated server browser. If you cannot see your server it is likely a local network configuration is not fully compatible with UPnP.
@@ -55,6 +55,8 @@ In that case, you will need to launch Miscreated using the +connect switch. To d
 C:\Program Files\Steam\steamapps\common\Miscreated\Miscreated.exe +connect 192.168.1.103
 ```
 Be sure to change `192.168.1.103` to the internal network IP address of the computer running the Miscreated server.
+
+***NOTICE*** if you have changed the base port number from the default you will need to add ` 12345` to the end of your connect string, substituting your base port number for the 12345 value.
 
 ## Manually removing the UPnP port mappings
 If you wish to ensure the UPnP port mappings are removed after closing your server, execute the `remove_upnp.cmd` file which was automatically created in the same directory as the `start_server.cmd` file.
