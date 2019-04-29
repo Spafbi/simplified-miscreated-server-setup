@@ -148,15 +148,19 @@ if exist "%VARIABLESDIR%\rcon_password.txt" (
 )
 if "%RCONPASS%"=="DONTJUSTPRESSENTER" goto setrconpassword
 echo %RCONPASS%>"%VARIABLESDIR%\rcon_password.txt"
-if not exist "%SERVERDIR%\hosting.cfg" (
-  echo http_password=%RCONPASS%>>"%SERVERDIR%\hosting.cfg"
+echo.
+goto :eof
+
+
+:passwordcfg
+set HOSTINGFILE="%SERVERDIR%\hosting.cfg"
+if not exist "%HOSTINGFILE%" (
+  echo http_password=%RCONPASS%>>"%HOSTINGFILE%"
 ) else (
   copy /v /y "%SERVERDIR%\hosting.cfg" "%SERVERDIR%\hosting.cfg.bak" >nul
-  type "%SERVERDIR%\hosting.cfg" | findstr /v "http_password=">>"%SERVERDIR%\hosting.cfg.new"
-  echo http_password=%RCONPASS%>>"%SERVERDIR%\hosting.cfg.new"
-  move /y "%SERVERDIR%\hosting.cfg.new" "%SERVERDIR%\hosting.cfg" >nul
+  @powershell -Command "& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'http_password=\w*', 'http_password=%RCONPASS%'} | Set-Content '%HOSTINGFILE%.new';}"
+  move /y "%HOSTINGFILE%.new" "%HOSTINGFILE%" >nul
 )
-echo.
 goto :eof
 
 
@@ -172,6 +176,7 @@ if /I "%ENABLEUPNP%"=="y" (
 )
 call :createlocaljoin
 call :validateserver
+call :passwordcfg
 call :startserver
 echo.
 echo [1m[33m[4mThe Miscreated server gracefully exited. Restarting...[0m
