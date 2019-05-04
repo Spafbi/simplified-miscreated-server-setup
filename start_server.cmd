@@ -195,6 +195,8 @@ goto :eof
 
 :startserver
 echo [1m[33m[4mStarting the Miscreated server[0m
+echo [1m[33m[4m  start command:[0m
+echo "%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver
 "%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver
 if /I "%ENABLEUPNP%"=="y" (
   call :removeupnp
@@ -242,7 +244,7 @@ if /I "%ENABLEUPNP%"=="y" (
 if /I "%WHITELISTED%"=="y" (
   echo The server [1m[33m[4mwill[0m be whitelisted.
   echo You will need to add your Steam64ID to the whitelist before joining the server.
-) else if /I "%WHITELISTED%"=="n" (
+) else (
   echo The server [1m[33m[4mwill not[0m be whitelisted...
 )
 echo.
@@ -334,10 +336,10 @@ if not exist "%VARIABLESDIR%" (
 call :setservername
 call :setfirewall
 call :setwhitelisted
-if /I %WHITELISTED%=="y" (
-  set WHITELISTED=-mis_whitelist
+if /I "%WHITELISTED%"=="y" (
+  set WLOPTION=-mis_whitelist
 ) else (
-  set WHITELISTED=
+  set WLOPTION=
 )
 
 call :setmaxplayers
@@ -377,7 +379,7 @@ if not exist "%SQLITEBIN%" (
   call :getsqlite3
 )
 
-set OPTIONS=%WHITELISTED%
+set OPTIONS=%WLOPTION%
 if defined OPTIONS (
   echo Additional command line options: %OPTIONS%
 )
