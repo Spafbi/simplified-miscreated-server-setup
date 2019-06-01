@@ -1,7 +1,7 @@
 # Simplified Miscreated Server Setup
 This simplified startup process will prompt you for some basic server variables (server name, max number of players, RCON password, and whether or not to enable the whitelist), store the variables for later use, download `steamcmd.exe` from Valve, use `steamcmd.exe` to download and install the Miscreated server, download upnpc from the MiniUPnP Project to automatically open the requisite firewall ports, and finally start the server process using the configure variables.
 
-This script has only been tested on Windows 10 v1809. If you're running an earlier version you may need to first manually install [curl for 64 bit](https://curl.haxx.se/windows/).
+This script has only been tested on Windows 10 v1809 and v1903. If you're running an earlier version you may need to first manually install [curl for 64 bit](https://curl.haxx.se/windows/).
 
 ### Configurable options
 When the script is run, it will prompt you to set the following values:
