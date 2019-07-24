@@ -1,4 +1,5 @@
 @echo OFF
+chcp 65001>nul
 setlocal EnableDelayedExpansion
 REM - This grabs and parses the directory in which this CMD file exists.
 set BASEPATH=%~dp0
@@ -29,16 +30,24 @@ if not exist "%HOSTINGFILE%" (
 )
 goto :eof
 
+:cleanmods
+if exist "%MODSDIR%" (
+  echo [1m[33mCleaning up mods directory[0m ^(this ensures mods are current^)
+  echo [1m[33m  removing directory:[0m %MODSDIR%
+  rmdir /s /q "%MODSDIR%"
+)
+goto :eof
+
 
 :createlocaljoin
-echo [1m[33m[4mCreating join_local_server.cmd script[0m
+echo [1m[33mCreating join_local_server.cmd script[0m
 echo ^@echo off > join_local_server.cmd
 echo explorer steam://run/299740/connect/+connect 127.0.0.1 %GAMEPORTA% >> join_local_server.cmd
 goto :eof
 
 
 :createmanualremoveupnpscript
-echo [1m[33m[4mCreating firewall UPnP settings manual removal script[0m
+echo [1m[33mCreating firewall UPnP settings manual removal script[0m
 @echo off
 echo @echo off> remove_upnp.cmd
 echo echo ### UPnP BEFORE ###>> remove_upnp.cmd
@@ -54,7 +63,7 @@ goto :eof
 
 
 :getsqlite3
-echo [1m[33m[4mDownloading SQLite3 binaries[0m
+echo [1m[33mDownloading SQLite3 binaries[0m
 set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win32-x86-3280000.zip
 set SQLITEBINZIP=%BASEPATH%\sqlite-tools-win32-x86-3280000.zip
 
@@ -74,7 +83,7 @@ goto :eof
 
 
 :getsteamcmd
-echo [1m[33m[4mDownloading steamcmd binaries[0m
+echo [1m[33mDownloading steamcmd binaries[0m
 set STEAMARCHIVE=%BASEPATH%\steamcmd.zip
 echo curl -L https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -o "%STEAMARCHIVE%"
 curl -L https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -o "%STEAMARCHIVE%"
@@ -86,7 +95,7 @@ goto :eof
 
 
 :getupnphelper
-echo [1m[33m[4mGrabbing the UPnP helper[0m
+echo [1m[33mGrabbing the UPnP helper[0m
 set UPNPCARCHIVE=%BASEPATH%\upnpc-exe-win32-20150918.zip
 
 curl -L http://miniupnp.tuxfamily.org/files/download.php?file=upnpc-exe-win32-20150918.zip -o "%UPNPCARCHIVE%"
@@ -99,7 +108,7 @@ goto :eof
 
 
 :grantallguides
-echo [1m[33m[4mGranting crafting guides to all players[0m
+echo [1m[33mGranting crafting guides to all players[0m
 echo CREATE TRIGGER IF NOT EXISTS grant_all_guides AFTER INSERT ON ServerAccountData BEGIN UPDATE ServerAccountData SET Guide00=16777215 WHERE ServerAccountDataID=NEW.ServerAccountDataID; END; UPDATE ServerAccountData SET Guide00=16777215;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
 goto :eof
 
@@ -130,55 +139,54 @@ goto :eof
 :printconfig
 echo.
 echo.
-echo ==============================================================================
-echo                 The servername will be: [1m[33m[4m%SERVERNAME%[0m
-echo  The maximum number of players will be: [1m[33m[4m%MAXPLAYERS%[0m
-echo      The base game server port will be: [1m[33m[4m%GAMEPORTA%[0m
+echo ══════════════════════════════════════════════════════════════════════════════
+echo                 The servername will be: [1m[36m%SERVERNAME%[0m
+echo  The maximum number of players will be: [1m[36m%MAXPLAYERS%[0m
+echo      The base game server port will be: [1m[36m%GAMEPORTA%[0m
 echo.
-echo              [1m[31mNOTICE:[0m Your RCON port is: [1m[33m[4m%RCONPORT%[0m
+echo              [1m[31mNOTICE:[0m Your RCON port is: [1m[36m%RCONPORT%[0m
 echo.
 
 if /I "%GRANTGUIDES%"=="y" (
-  echo Guides [1m[33m[4mwill be granted[0m to all players.
+  echo  ► Guides [1m[33mwill be granted[0m to all players
 ) else if /I "%GRANTGUIDES%"=="n" (
-  echo Guides [1m[33m[4mwill not be granted[0m to all players.
+  echo  ► Guides [1m[33mwill not be granted[0m to all players
 )
 
 if /I "%BUILDRULE%"=="0" (
-  echo Base building is [1m[33m[4mdisabled[0m.
+  echo  ► Base building is [1m[33mdisabled[0m
 ) else if /I "%BUILDRULE%"=="1" (
-  echo Base building is [1m[33m[4menabled: default rules[0m.
+  echo  ► Base building is [1m[33menabled[0m[1m[33m: [0[36mdefault rules[0m
 ) else if /I "%BUILDRULE%"=="2" (
-  echo Base building is [1m[33m[4menabled: build-anywhere[0m.
+  echo  ► Base building is [1m[33menabled[0m[1m[33m: [0[36mbuild-anywhere[0m
 )
 
 if /I "%ENABLEUPNP%"=="y" (
-  echo Firewall ports [1m[33m[4mwill be forwarded[0m.
+  echo  ► Firewall ports [1m[33mwill be forwarded[0m
 ) else if /I "%ENABLEUPNP%"=="n" (
-  echo Firewall ports [1m[33m[4mwill not be automatically forwarded[0m.
+  echo  ► Firewall ports [1m[33mwill not be automatically forwarded[0m
 )
 
 if /I "%WHITELISTED%"=="y" (
-  echo The server [1m[33m[4mwill be whitelisted[0m .
-  echo You will need to add your Steam64ID to the whitelist before joining the server.
+  echo  ► The server [1m[33mwill be whitelisted[0m
+  echo  ► You will need to add your Steam64ID to the whitelist before joining the server
 ) else (
-  echo The server [1m[33m[4mwill not be whitelisted[0m
+  echo  ► The server [1m[33mwill not be whitelisted[0m
 )
-
-echo ==============================================================================
+echo ══════════════════════════════════════════════════════════════════════════════
 echo.
 echo.
 goto :eof
 
 
 :removegrantallguides
-echo [1m[33m[4mRemoving grant_all_guides database trigger[0m
+echo [1m[33mRemoving grant_all_guides database trigger[0m
 echo DROP TRIGGER IF EXISTS grant_all_guides;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
 goto :eof
 
 
 :removeupnp
-echo [1m[33m[4mRemoving firewall UPnP entries[0m
+echo [1m[33mRemoving firewall UPnP entries[0m
 "%UNPNCHELPER%\upnpc-shared.exe" -N %RCONPORT% %RCONPORT% TCP >nul
 "%UNPNCHELPER%\upnpc-shared.exe" -N %GAMEPORTA% %GAMEPORTD% UDP >nul
 goto :eof
@@ -210,7 +218,7 @@ goto :eof
 
 
 :setbaseport
-echo [1m[33m[4mLoading base server port setting...[0m
+echo [1m[33mLoading base server port setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\baseport.txt" (
@@ -263,7 +271,7 @@ goto :eof
 
 
 :setbuildrule
-echo [1m[33m[4mLoading building rule setting...[0m
+echo [1m[33mLoading building rule setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\buildrule.txt" (
@@ -297,7 +305,7 @@ goto :eof
 
 
 :setfirewall
-echo [1m[33m[4mLoading firewall setting...[0m
+echo [1m[33mLoading firewall setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\enableupnp.txt" (
@@ -328,7 +336,7 @@ goto :eof
 
 
 :setgiveallguides
-echo [1m[33m[4mLoading grant guides setting...[0m
+echo [1m[33mLoading grant guides setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\grantguides.txt" (
@@ -358,7 +366,7 @@ goto :eof
 
 
 :setmaxplayers
-echo [1m[33m[4mLoading max players setting...[0m
+echo [1m[33mLoading max players setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\maxplayers.txt" (
@@ -398,7 +406,7 @@ goto :eof
 
 
 :setrconpassword
-echo [1m[33m[4mLoading password setting...[0m
+echo [1m[33mLoading password setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\rcon_password.txt" (
@@ -424,7 +432,7 @@ goto :eof
 
 
 :setservername
-echo [1m[33m[4mLoading server name setting...[0m
+echo [1m[33mLoading server name setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\server_name.txt" (
@@ -450,14 +458,14 @@ goto :eof
 
 
 :setupnp
-echo [1m[33m[4mCreating firewall UPnP entries[0m
+echo [1m[33mCreating firewall UPnP entries[0m
 "%UNPNCHELPER%\upnpc-shared.exe" -r %GAMEPORTA% UDP %GAMEPORTB% UDP %GAMEPORTC% UDP %GAMEPORTD% UDP %RCONPORT% TCP >nul
 echo.
 goto :eof
 
 
 :setwhitelisted
-echo [1m[33m[4mLoading whitelisting setting...[0m
+echo [1m[33mLoading whitelisting setting...[0m
 set SPACER=1
 
 if exist "%VARIABLESDIR%\whitelisted.txt" (
@@ -499,10 +507,11 @@ echo   ^( auto-validation will commence in 10 seconds ^)
 CHOICE /d Y /T 10 /M "Validate and/or update the server?"
 IF !ERRORLEVEL! EQU 1 call :validateserver
 
+call :cleanmods
 call :printconfig
 call :startserver
 echo.
-echo [1m[33m[4mThe Miscreated server exited.[0m
+echo [1m[33mThe Miscreated server exited.[0m
 CHOICE /d Y /T 10 /M "Would you like to restart the server? (auto-restart in 10 seconds)"
 IF !ERRORLEVEL! EQU 1 goto start
 
@@ -510,9 +519,9 @@ goto :eof
 
 
 :startserver
-echo [1m[33m[4mStarting the Miscreated server[0m
-echo [1m[33m[4m  start command:[0m
-echo "%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver
+echo [1m[33mStarting the Miscreated server[0m
+echo |set /p="[1m[33m  command: [0m"
+echo [1m[36m"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver[0m
 "%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver
 if /I "%ENABLEUPNP%"=="y" (
   call :removeupnp
@@ -522,7 +531,7 @@ goto :eof
 
 
 :validateserver
-echo [1m[33m[4mInstalling/Updating/Validating server files[0m
+echo [1m[33mInstalling/Updating/Validating server files[0m
 "%STEAMCMDBIN%" +login anonymous +force_install_dir "%SERVERDIR%" +app_update 302200 validate +quit
 if not exist "%MISSERVERBIN%" (
   echo =^> ERROR:
@@ -554,6 +563,7 @@ call :setmaxplayers
 call :setbuildrule
 
 set SERVERDIR=%BASEPATH%\MiscreatedServer
+set MODSDIR=%SERVERDIR%\Mods
 set MISSERVERBIN=%SERVERDIR%\Bin64_dedicated\MiscreatedServer.exe
 
 if not exist "%SERVERDIR%" (
