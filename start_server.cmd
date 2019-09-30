@@ -1,10 +1,14 @@
 @echo OFF
+REM START USER DEFINED OPTIONS
+set MAP=islands
+set BIND=
+REM STOP USER DEFINED OPTIONS
+
 chcp 65001>nul
+REM - The following grabs and parses the directory in which this CMD file exists.
 setlocal EnableDelayedExpansion
-REM - This grabs and parses the directory in which this CMD file exists.
 set BASEPATH=%~dp0
 set BASEPATH=%BASEPATH:~0,-1%
-set MAP=islands
 goto main
 
 
@@ -610,6 +614,14 @@ if not exist "%UNPNCHELPER%" (
 )
 
 set OPTIONS=%WLOPTION%
+
+if /I NOT "%BIND%"=="" (
+  if defined OPTIONS (
+    set OPTIONS=%OPTIONS% -sv_bind %BIND%
+  ) else (
+    set OPTIONS=-sv_bind %BIND%
+  )
+)
 
 if defined OPTIONS (
   echo Additional command line options: %OPTIONS%
