@@ -1,7 +1,16 @@
+__pycache__
+*.spec
+build
+Configs
+dist
 join_local_server.cmd
-remove_upnp.cmd
 MiscreatedServer
+Pipfile
+Pipfile.lock
+remove_upnp.cmd
 scriptvars
+Servers
 sqlite
 SteamCMD
+temp
 upnpc
