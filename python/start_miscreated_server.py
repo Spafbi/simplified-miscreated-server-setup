@@ -87,11 +87,12 @@ class MiscreatedServer():
         thisCmd = '"{STEAMCMD}" +login anonymous +force_install_dir ' \
                   '"{MCDIR}" +app_update 302200 validate +quit'
         thisCmd = thisCmd.format(STEAMCMD=self.steamCmd,
-                                 MCDIR=self.mcDir).replace('/', '\\')
-        thisCmd = thisCmd.split(' ')
-        # This next line fixes steam passing each cmd arg w/o spacing
-        thisCmd = [s + ' ' for s in thisCmd]
-        subprocess.run(args=[thisCmd])
+                                 MCDIR=self.mcDir)
+        try:
+            runWinCmd(thisCmd)
+        except:
+            print("Oops... something went wrong with the command.")
+            print(thisCmd)
 
     def mcPrint(self, message, thisDict=dict()):
         colors = getColors()
@@ -112,6 +113,13 @@ class MiscreatedServer():
 
         # Grab install the server if needed
         self.checkServerInstall()
+
+    def runWinCmd(self, command):
+        # Convert forward slashes to escaped backslashes
+        thisCmd = command.replace('/', '\\').split(' ')
+        # Fixes steam passing each cmd arg w/o spacing
+        thisCmd = [s + ' ' for s in thisCmd]
+        subprocess.run(args=[thisCmd])
 
 def loadJSON(file=False):
     if not file or not os.path.exists(file):
@@ -531,8 +539,33 @@ def reconcileSettings(cli=dict(), default=dict(), svr=dict()):
 
 
 @click.command()
-def hello():
-    click.echo('Hello World!')
+@click.option('-p', '--port', default=64090, help='base port for the server')
+@click.option('-b', '--buildrule',
+              type=click.Choice([0, 1, 2]),
+              default=1,
+              help='base building rule: 0=no bases, '
+                   '1=normal rules, 2=build anywhere')
+@click.option('-u', '--upnp', default=1, help='set to 1 to enable UPnP')
+@click.option('-g', '--guides', default=0, help='grant all guides to players')
+@click.option('-m,', '--maxplayers',
+              default=36,
+              help='max players supported by the server (1-50)')
+@click.option('-r', '--rconpw', default=None, help='RCON password')
+@click.option('-s', '--servername',
+              default=None,
+              help='server name as seen in the server browser')
+@click.option('-w', '--whitelisted',
+              default=0,
+              help='set to 1 to whitelist the server')
+def hello(port,
+          buildrule,
+          upnp,
+          guides,
+          maxplayers,
+          rconpw,
+          servername,
+          whitelisted):
+    click.echo('Hello, {port}'.format(port=port))
 
 
 if __name__ == '__main__':
