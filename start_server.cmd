@@ -145,7 +145,7 @@ goto :eof
 echo.
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════
-echo                 The servername will be: [1m[36m%SERVERNAME%[0m
+echo                 The server name will be: [1m[36m%SERVERNAME%[0m
 echo  The maximum number of players will be: [1m[36m%MAXPLAYERS%[0m
 echo      The base game server port will be: [1m[36m%GAMEPORTA%[0m
 echo.
