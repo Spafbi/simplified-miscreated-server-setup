@@ -1,9 +1,9 @@
 @echo off
-goto :update
+goto update
+
 
 :update
 echo Checking for new Simplified Miscreated Server Script updates...
-setlocal EnableDelayedExpansion
 set GITURL=https://api.github.com/repos/Spafbi/simplified-miscreated-server-setup/releases/latest
 set DOWNLOADURL=https://github.com/Spafbi/simplified-miscreated-server-setup/releases/download/
 set CORESCRIPT=start_server_core.cmd
@@ -32,34 +32,40 @@ if exist "latest_release" (
 if "%LATEST%" == "0" if "%CURRENT%" == "0" (
   echo No core script exists and the current release for download cannot be determined at this time.
   echo No action taken.
-  goto :end
+  call end
 )
 
 if not exist %TARGETSCRIPT% set DOWNLOAD=1
 if "%CURRENT%" == "0" set DOWNLOAD=1
 if not "%CURRENT%" == "%LATEST%" set DOWNLOAD=1
-if "%DOWNLOAD%" == "1" call :getlatest
+if "%DOWNLOAD%" == "1" (
+  curl -L "%DOWNLOADURL%%LATEST%/%CORESCRIPT%">%TARGETSCRIPT%
+  echo %LATEST%>local_release
+)
 
-goto :start
+goto start
 
-:getlatest
-curl -L "%DOWNLOADURL%%LATEST%/%CORESCRIPT%">%TARGETSCRIPT%
-echo %LATEST%>local_release
-goto :eof
 
 :start
-if exist %TARGETSCRIPT% (
-%TARGETSCRIPT%
-CHOICE /d Y /T 10 /M "Would you like to restart the server? (auto-restart in 10 seconds)"
-IF !ERRORLEVEL! EQU 1 goto update
+if not exist %TARGETSCRIPT% (
+  echo ERROR: %CORESCRIPT% was not found.
+  exit /b
+)
+call %TARGETSCRIPT%
+CHOICE /D Y /T 10 /M "Would you like to restart the server? (auto-restart in 10 seconds)"
+IF ERRORLEVEL 2 goto gracefulend
+
+goto update
+
+
+:gracefulend
 echo.
 echo I hope you found this script use useful.
 echo   -Spafbi
 echo.
 timeout /t 10
-) else (
-  echo ERROR: %CORESCRIPT% was not found.
-)
-goto :end
+goto end
+
 
 :end
+exit /b
