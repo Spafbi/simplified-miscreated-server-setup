@@ -39,11 +39,11 @@ if not exist %TARGETSCRIPT% set DOWNLOAD=1
 if "%CURRENT%" == "0" set DOWNLOAD=1
 if not "%CURRENT%" == "%LATEST%" set DOWNLOAD=1
 if "%DOWNLOAD%" == "1" call :getlatest
+
 goto :start
 
 :getlatest
-REM curl -L "%DOWNLOADURL%%LATEST%/%CORESCRIPT%">%TARGETSCRIPT%
-curl -L "%DOWNLOADURL%%LATEST%/start_server.cmd">%TARGETSCRIPT%
+curl -L "%DOWNLOADURL%%LATEST%/%CORESCRIPT%">%TARGETSCRIPT%
 echo %LATEST%>local_release
 goto :eof
 
