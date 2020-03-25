@@ -1,7 +1,11 @@
+copy_start_server_core.cmd
 join_local_server.cmd
-remove_upnp.cmd
+latest_release
+local_release
 MiscreatedServer
+remove_upnp.cmd
 scriptvars
 sqlite
+start_server_core_download.cmd
 SteamCMD
 upnpc
