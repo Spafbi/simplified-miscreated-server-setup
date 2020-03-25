@@ -1,14 +1,14 @@
 @echo OFF
-REM START USER DEFINED OPTIONS
-set MAP=islands
 set BIND=
-REM STOP USER DEFINED OPTIONS
+
+REM *** Do not edit anything beyond this line ***
 
 chcp 65001>nul
-REM - The following grabs and parses the directory in which this CMD file exists.
 setlocal EnableDelayedExpansion
+REM - This grabs and parses the directory in which this CMD file exists.
 set BASEPATH=%~dp0
 set BASEPATH=%BASEPATH:~0,-1%
+
 goto main
 
 
@@ -33,6 +33,7 @@ if not exist "%HOSTINGFILE%" (
   )
 )
 goto :eof
+
 
 :cleanmods
 if exist "%MODSDIR%" (
@@ -114,7 +115,7 @@ goto :eof
 :grantallguides
 echo [1m[33mGranting crafting guides to all players[0m
 echo DROP TRIGGER IF EXISTS grant_all_guides;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
-echo CREATE TRIGGER IF NOT EXISTS grant_all_guides AFTER INSERT ON ServerAccountData BEGIN UPDATE ServerAccountData SET Guide00=2147483647 WHERE ServerAccountDataID=NEW.ServerAccountDataID; END; UPDATE ServerAccountData SET Guide00=2147483647;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
+echo CREATE TRIGGER IF NOT EXISTS grant_all_guides AFTER UPDATE ON Characters BEGIN UPDATE ServerAccountData SET Guide00=2147483647; END; UPDATE ServerAccountData SET Guide00=2147483647;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
 goto :eof
 
 
@@ -132,7 +133,7 @@ if not exist "%HOSTINGFILE%" (
   if "!PSCOUNT!" == "0" (
     echo http_password=%RCONPASS%>>"%HOSTINGFILE%"
   ) else (
-    powershell -Command "& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'http_password=\w*', 'http_password=%RCONPASS%'} | Set-Content '%HOSTINGFILE%.new';}"
+    powershell -Command "$rconpass = ${env:RCONPASS};& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'http_password=\w*', 'http_password=${rconpass}'} | Set-Content '%HOSTINGFILE%.new';}"
 
     echo .>nul
     move /y "%HOSTINGFILE%.new" "%HOSTINGFILE%" >nul
@@ -145,11 +146,12 @@ goto :eof
 echo.
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════
-echo                 The server name will be: [1m[36m%SERVERNAME%[0m
-echo  The maximum number of players will be: [1m[36m%MAXPLAYERS%[0m
-echo      The base game server port will be: [1m[36m%GAMEPORTA%[0m
+echo                       Map: [1m[36m%MAPNAME%[0m
+echo                Servername: [1m[36m%SERVERNAME%[0m
+echo               Max players: [1m[36m%MAXPLAYERS%[0m
+echo          Base server port: [1m[36m%GAMEPORTA%[0m
 echo.
-echo              [1m[31mNOTICE:[0m Your RCON port is: [1m[36m%RCONPORT%[0m
+echo [1m[31mNOTICE:[0m Your RCON port is: [1m[36m%RCONPORT%[0m
 echo.
 
 if /I "%GRANTGUIDES%"=="y" (
@@ -212,7 +214,7 @@ if not exist "%HOSTINGFILE%" (
   if "!PSCOUNT!" == "0" (
     echo sv_servername=%SERVERNAME%>>"%HOSTINGFILE%"
   ) else (
-    powershell -Command "& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'sv_servername=.+', 'sv_servername=%SERVERNAME%'} | Set-Content '%HOSTINGFILE%.new';}"
+    powershell -Command "$srvname = ${env:SERVERNAME};& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'sv_servername=.+', [regex]::Escape('sv_servername=${srvname}')} | Set-Content '%HOSTINGFILE%.new';}"
 
     echo .>nul
     move /y "%HOSTINGFILE%.new" "%HOSTINGFILE%" >nul
@@ -370,6 +372,26 @@ if "%SPACER%" == "1" echo.
 goto :eof
 
 
+:setmap
+echo [1m[33mLoading map setting...[0m
+set SPACER=1
+
+if exist "%VARIABLESDIR%\map.txt" (
+  set /p MAPNAME=<"%VARIABLESDIR%\map.txt"
+  set SPACER=0
+) else (
+  echo Enter the map you would like to use with your server. Press enter to use the
+  echo default map. Enter "canyonlands" to use the Canyonlands DLC map.
+  set /p MAPNAME="Map: [islands]" || set MAPNAME=islands
+)
+
+echo ^%MAPNAME%>"%VARIABLESDIR%\map.txt"
+
+if "%SPACER%" == "1" echo.
+
+goto :eof
+
+
 :setmaxplayers
 echo [1m[33mLoading max players setting...[0m
 set SPACER=1
@@ -509,7 +531,7 @@ if /I "%ENABLEUPNP%"=="y" call :setupnp
 
 echo Would you like to validate or update the server files? 'Y' recommended.
 echo   ^( auto-validation will commence in 10 seconds ^)
-CHOICE /C YNQ /d Y /T 10 /M "Validate and/or update the server?"
+CHOICE /d Y /T 10 /M "Validate and/or update the server?"
 IF !ERRORLEVEL! EQU 1 call :validateserver
 
 call :cleanmods
@@ -517,7 +539,7 @@ call :printconfig
 call :startserver
 echo.
 echo [1m[33mThe Miscreated server exited.[0m
-CHOICE /C YNQ /d Y /T 10 /M "Would you like to restart the server? (auto-restart in 10 seconds)"
+CHOICE /d Y /T 10 /M "Would you like to restart the server? (auto-restart in 10 seconds)"
 IF !ERRORLEVEL! EQU 1 goto start
 
 goto :eof
@@ -526,8 +548,8 @@ goto :eof
 :startserver
 echo [1m[33mStarting the Miscreated server[0m
 echo |set /p="[1m[33m  command: [0m"
-echo [1m[36m"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver[0m
-"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% +sv_maxplayers %MAXPLAYERS% +map %MAP% +sv_servername "%SERVERNAME%" +http_startserver
+echo [1m[36m"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +sv_servername "%SERVERNAME%" +http_startserver[0m
+"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +sv_servername "%SERVERNAME%" +http_startserver
 if /I "%ENABLEUPNP%"=="y" (
   call :removeupnp
 )
@@ -633,10 +655,21 @@ if /I "%GRANTGUIDES%"=="n" (
   if exist "%SERVERDIR%\miscreated.db" call :removegrantallguides
 )
 
+REM This grabs the first serverid from the database and uses that value
+if exist "%SERVERDIR%\miscreated.db" (
+  echo SELECT GameServerID FROM Characters ORDER BY CharacterID LIMIT 1;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db">serverid
+  set /p SERVERID=<serverid
+  del /q serverid
+) else (
+  SET SERVERID=100
+)
+
+
 call :createlocaljoin
 
 if not exist "%MISSERVERBIN%" call :validateserver
 
+call :setmap
 call :servernamecfg
 call :passwordcfg
 call :basescfg
