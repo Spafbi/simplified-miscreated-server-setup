@@ -99,9 +99,10 @@ goto :eof
 
 :getupnphelper
 echo [1m[33mGrabbing the UPnP helper[0m
-set UPNPCARCHIVE=%BASEPATH%\upnpc-exe-win32-20150918.zip
+set UPNPCARCHIVE=%BASEPATH%\upnpc.zip
+set UPNPURL=https://github.com/miniupnp/miniupnp/releases/download/miniupnpc_2_1/win32-miniupnpc-2.1.zip
 
-curl -L http://miniupnp.tuxfamily.org/files/download.php?file=upnpc-exe-win32-20150918.zip -o "%UPNPCARCHIVE%"
+curl -L %UPNPURL% -o "%UPNPCARCHIVE%"
 
 powershell Expand-Archive -LiteralPath '%UPNPCARCHIVE%' -DestinationPath '%UNPNCHELPER%'
 
