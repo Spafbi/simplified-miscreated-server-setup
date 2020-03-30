@@ -15,7 +15,6 @@ set HOSTINGFILE=%SERVERDIR%\hosting.cfg
 if not exist "%HOSTINGFILE%" (
   echo g_gameRules_bases=^%BUILDRULE%>"%HOSTINGFILE%"
 ) else (
-  copy /v /y "%HOSTINGFILE%" "%SERVERDIR%\hosting.cfg.bak" >nul
   powershell -Command "Write-Output (get-content '%HOSTINGFILE%' | select-string -pattern 'g_gameRules_bases').length">"%VARIABLESDIR%\temp.txt"
 
   echo .>nul
@@ -24,8 +23,8 @@ if not exist "%HOSTINGFILE%" (
   if "!PSCOUNT!" == "0" (
     echo g_gameRules_bases=^%BUILDRULE%>>"%HOSTINGFILE%"
   ) else (
-    powershell -Command "& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'g_gameRules_bases=\w*', 'g_gameRules_bases=%BUILDRULE%'} | Set-Content '%HOSTINGFILE%.new';}"
-
+    powershell -Command "$file = ${env:HOSTINGFILE}; Get-Content $file | Where-Object {$_ -notmatch 'g_gameRules_bases='} | Set-Content \"${file}.new\""
+    powershell -Command "$rule = ${env:BUILDRULE}; $file = \"${env:HOSTINGFILE}.new\"; Add-Content $file \"g_gameRules_bases=${rule}\""
     echo .>nul
     move /y "%HOSTINGFILE%.new" "%HOSTINGFILE%" >nul
   )
@@ -123,7 +122,6 @@ set HOSTINGFILE=%SERVERDIR%\hosting.cfg
 if not exist "%HOSTINGFILE%" (
   echo http_password=%RCONPASS%>>"%HOSTINGFILE%"
 ) else (
-  copy /v /y "%HOSTINGFILE%" "%SERVERDIR%\hosting.cfg.bak" >nul
   powershell -Command "Write-Output (get-content '%HOSTINGFILE%' | select-string -pattern 'http_password').length">"%VARIABLESDIR%\temp.txt"
 
   echo .>nul
@@ -132,8 +130,8 @@ if not exist "%HOSTINGFILE%" (
   if "!PSCOUNT!" == "0" (
     echo http_password=%RCONPASS%>>"%HOSTINGFILE%"
   ) else (
-    powershell -Command "$rconpass = ${env:RCONPASS};& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'http_password=\w*', 'http_password=${rconpass}'} | Set-Content '%HOSTINGFILE%.new';}"
-
+  powershell -Command "$file = ${env:HOSTINGFILE}; Get-Content $file | Where-Object {$_ -notmatch 'http_password='} | Set-Content \"${file}.new\""
+  powershell -Command "$rconpass = ${env:RCONPASS}; $file = \"${env:HOSTINGFILE}.new\"; Add-Content $file \"http_password=${rconpass}\""
     echo .>nul
     move /y "%HOSTINGFILE%.new" "%HOSTINGFILE%" >nul
   )
@@ -204,7 +202,6 @@ set HOSTINGFILE=%SERVERDIR%\hosting.cfg
 if not exist "%HOSTINGFILE%" (
   echo sv_servername=%SERVERNAME%>>"%HOSTINGFILE%"
 ) else (
-  copy /v /y "%HOSTINGFILE%" "%SERVERDIR%\hosting.cfg.bak" >nul
   powershell -Command "Write-Output (get-content '%HOSTINGFILE%' | select-string -pattern 'sv_servername').length">"%VARIABLESDIR%\temp.txt"
 
   echo .>nul
@@ -213,8 +210,8 @@ if not exist "%HOSTINGFILE%" (
   if "!PSCOUNT!" == "0" (
     echo sv_servername=%SERVERNAME%>>"%HOSTINGFILE%"
   ) else (
-    powershell -Command "$srvname = ${env:SERVERNAME};& { Get-Content '%HOSTINGFILE%' | Foreach-Object {$_ -replace 'sv_servername=.+', [regex]::Escape('sv_servername=${srvname}')} | Set-Content '%HOSTINGFILE%.new';}"
-
+    powershell -Command "$file = ${env:HOSTINGFILE}; Get-Content $file | Where-Object {$_ -notmatch 'sv_servername='} | Set-Content \"${file}.new\""
+    powershell -Command "$srvname = ${env:SERVERNAME}; $file = \"${env:HOSTINGFILE}.new\"; Add-Content $file \"sv_servername=${srvname}\""
     echo .>nul
     move /y "%HOSTINGFILE%.new" "%HOSTINGFILE%" >nul
   )
