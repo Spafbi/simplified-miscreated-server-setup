@@ -67,7 +67,7 @@ echo [1m[33mCreating service_wrapper.cmd script[0m
 set MISSRVPATH=%~dp0
 echo ^@echo off > service_wrapper.cmd
 echo pushd "%~dp0" >> service_wrapper.cmd
-echo call start_server.cmd ^> service_wrapper.log" >> service_wrapper.cmd
+echo call start_server.cmd ^> service_wrapper.log >> service_wrapper.cmd
 goto :eof
 
 
