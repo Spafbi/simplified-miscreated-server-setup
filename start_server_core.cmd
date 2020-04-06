@@ -53,10 +53,21 @@ goto :eof
 echo [1m[33mCreating service_install.cmd script[0m
 set MISSRVPATH=%~dp0
 echo ^@echo off > service_install.cmd
-echo sc.exe create MiscreatedServer01 binPath="%MISSRVPATH%start_server.cmd" start=delayed-auto >> service_install.cmd
+echo sc create "MiscreatedServer01" start= delayed-auto binPath= "%SRVANYBIN%" >> service_install.cmd
+echo sc.exe description MiscreatedServer01 "A self-hosted Miscreated Server" >> service_install.cmd
+echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v Application /t REG_SZ /d "%MISSRVPATH%start_server.cmd" >> service_install.cmd
 echo echo. >> service_install.cmd
 echo echo Please reboot to complete the service installation. >> service_install.cmd
 echo pause >> service_install.cmd
+goto :eof
+
+
+:createservicewrapper
+echo [1m[33mCreating service_wrapper.cmd script[0m
+set MISSRVPATH=%~dp0
+echo ^@echo off > service_wrapper.cmd
+echo pushd "%~dp0" >> service_wrapper.cmd
+echo call start_server.cmd ^> service_wrapper.log" >> service_wrapper.cmd
 goto :eof
 
 
@@ -98,6 +109,18 @@ powershell Expand-Archive -LiteralPath '%SQLITEBINZIP%' -DestinationPath '%SQLIT
 echo Moving downloaded executables...
 move "%SQLITEPATH%\sqlite-tools-win32-x86-3280000\*.*" "%SQLITEPATH%\"
 rmdir "%SQLITEPATH%\sqlite-tools-win32-x86-3280000"
+
+echo Removing downloaded zip files...
+del /q *.zip
+goto :eof
+
+
+:getsrvany
+echo [1m[33mDownloading srvany-ng binaries[0m
+set SRVANYARCHIVE=%BASEPATH%\srvany.zip
+echo curl -L https://github.com/birkett/srvany-ng/releases/download/v1.0.0.0/srvany-ng_26-03-2015.zip -o "%SRVANYARCHIVE%"
+curl -L https://github.com/birkett/srvany-ng/releases/download/v1.0.0.0/srvany-ng_26-03-2015.zip -o "%SRVANYARCHIVE%"
+powershell Expand-Archive -LiteralPath '%SRVANYARCHIVE%' -DestinationPath '%SRVANYPATH%'
 
 echo Removing downloaded zip files...
 del /q *.zip
@@ -641,6 +664,16 @@ if not exist "%STEAMCMDPATH%" (
 
 if not exist "%STEAMCMDBIN%" call :getsteamcmd
 
+set SRVANYPATH=%BASEPATH%\service
+set SRVANYBIN=%SRVANYPATH%\x64\srvany-ng.exe
+if not exist "%SRVANYPATH%" (
+  echo Creating directory: "%SRVANYPATH%"...
+  md "%SRVANYPATH%"
+  echo.
+)
+
+if not exist "%SRVANYBIN%" call :getsrvany
+
 set SQLITEPATH=%BASEPATH%\sqlite
 set SQLITEBIN=%SQLITEPATH%\sqlite3.exe
 
@@ -693,6 +726,7 @@ if exist "%SERVERDIR%\miscreated.db" (
 call :createlocaljoin
 call :createinstallservice
 call :createremoveservice
+call :createservicewrapper
 
 if not exist "%MISSERVERBIN%" call :validateserver
 
