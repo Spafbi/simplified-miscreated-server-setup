@@ -5,6 +5,7 @@ local_release
 MiscreatedServer
 remove_upnp.cmd
 scriptvars
+service_*.cmd
 sqlite
 start_server_core_download.cmd
 SteamCMD

@@ -1,6 +1,7 @@
 @echo OFF
 REM *** Do not edit this script ***
 
+pushd "%~dp0"
 chcp 65001>nul
 setlocal EnableDelayedExpansion
 REM - This grabs and parses the directory in which this CMD file exists.
@@ -45,6 +46,25 @@ goto :eof
 echo [1m[33mCreating join_local_server.cmd script[0m
 echo ^@echo off > join_local_server.cmd
 echo explorer steam://run/299740/connect/+connect 127.0.0.1 %GAMEPORTA% >> join_local_server.cmd
+goto :eof
+
+
+:createinstallservice
+echo [1m[33mCreating service_install.cmd script[0m
+set MISSRVPATH=%~dp0
+echo ^@echo off > service_install.cmd
+echo sc.exe create MiscreatedServer01 binPath="%MISSRVPATH%start_server.cmd" start=delayed-auto >> service_install.cmd
+echo echo. >> service_install.cmd
+echo echo Please reboot to complete the service installation. >> service_install.cmd
+echo pause >> service_install.cmd
+goto :eof
+
+
+:createremoveservice
+echo [1m[33mCreating service_remove.cmd script[0m
+echo ^@echo off > service_remove.cmd
+echo sc stop MiscreatedServer01 >> service_remove.cmd
+echo sc.exe delete MiscreatedServer01 >> service_remove.cmd
 goto :eof
 
 
@@ -671,6 +691,8 @@ if exist "%SERVERDIR%\miscreated.db" (
 
 
 call :createlocaljoin
+call :createinstallservice
+call :createremoveservice
 
 if not exist "%MISSERVERBIN%" call :validateserver
 
