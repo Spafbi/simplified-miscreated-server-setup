@@ -9,7 +9,7 @@ set GITURL=https://api.github.com/repos/Spafbi/simplified-miscreated-server-setu
 set DOWNLOADURL=https://github.com/Spafbi/simplified-miscreated-server-setup/releases/download/
 set CORESCRIPT=start_server_core.cmd
 set DOWNLOAD=0
-powershell -Command "$request=${env:GITURL}; Write-Output (Invoke-WebRequest $request |ConvertFrom-Json |Select tag_name -ExpandProperty tag_name)">latest_release"
+powershell -Command "$request=${env:GITURL}; Write-Output (Invoke-WebRequest $request |ConvertFrom-Json |Select tag_name -ExpandProperty tag_name)">latest_release
 
 REM This if statement exists so I don't overwrite the core script while developing
 if exist .\.git\ (
@@ -19,13 +19,13 @@ if exist .\.git\ (
 )
 
 if exist "local_release" (
-  set /p CURRENT=<local_release"
+  set /p CURRENT=<local_release
 ) else (
   set CURRENT=0
 )
 
 if exist "latest_release" (
-  set /p LATEST=<latest_release"
+  set /p LATEST=<latest_release
 ) else (
   set LATEST=0
 )
