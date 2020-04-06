@@ -56,6 +56,7 @@ echo ^@echo off > service_install.cmd
 echo sc create "MiscreatedServer01" start= delayed-auto binPath= "%SRVANYBIN%" >> service_install.cmd
 echo sc.exe description MiscreatedServer01 "A self-hosted Miscreated Server" >> service_install.cmd
 echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v Application /t REG_SZ /d "%MISSRVPATH%service_wrapper.cmd" >> service_install.cmd
+echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v AppDirectory /t REG_SZ /d "%MISSRVPATH%" >> service_install.cmd
 echo echo. >> service_install.cmd
 echo echo Please reboot to complete the service installation. >> service_install.cmd
 echo pause >> service_install.cmd
