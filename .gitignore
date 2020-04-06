@@ -9,4 +9,5 @@ service*
 sqlite
 start_server_core_download.cmd
 SteamCMD
+stop.txt
 upnpc

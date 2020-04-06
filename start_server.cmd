@@ -54,6 +54,11 @@ if not exist %TARGETSCRIPT% (
   exit /b
 )
 call %TARGETSCRIPT%
+
+if exist "stop.txt" (
+  echo INFO: File "stop.txt" exists. Remove "stop.txt" file if you want the Miscreated Server to restart.
+  exit /b
+)
 CHOICE /D Y /T 10 /M "Would you like to restart the server? (auto-restart in 10 seconds)"
 IF ERRORLEVEL 2 goto gracefulend
 
