@@ -52,31 +52,31 @@ goto :eof
 :createinstallservice
 echo [1m[33mCreating service_install.cmd script[0m
 set MISSRVPATH=%~dp0
-echo ^@echo off > service_install.cmd
-echo sc create "MiscreatedServer01" start= delayed-auto binPath= "%SRVANYBIN%" >> service_install.cmd
-echo sc.exe description MiscreatedServer01 "A self-hosted Miscreated Server" >> service_install.cmd
-echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v Application /t REG_SZ /d "%MISSRVPATH%service_wrapper.cmd" >> service_install.cmd
-echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v AppDirectory /t REG_SZ /d "%MISSRVPATH%" >> service_install.cmd
-echo echo. >> service_install.cmd
-echo echo Please reboot to complete the service installation. >> service_install.cmd
-echo pause >> service_install.cmd
+echo ^@echo off> service_install.cmd
+echo sc create "MiscreatedServer01" start= delayed-auto binPath= "%SRVANYBIN%">> service_install.cmd
+echo sc.exe description MiscreatedServer01 "A self-hosted Miscreated Server">> service_install.cmd
+echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v Application /t REG_SZ /d "%MISSRVPATH%service_wrapper.cmd">> service_install.cmd
+echo REG ADD HKLM\SYSTEM\CurrentControlSet\Services\MiscreatedServer01\Parameters /f /v AppDirectory /t REG_SZ /d "%MISSRVPATH%">> service_install.cmd
+echo echo.>> service_install.cmd
+echo echo Please reboot to complete the service installation.>> service_install.cmd
+echo pause>> service_install.cmd
 goto :eof
 
 
 :createservicewrapper
 echo [1m[33mCreating service_wrapper.cmd script[0m
 set MISSRVPATH=%~dp0
-echo ^@echo off > service_wrapper.cmd
-echo pushd "%~dp0" >> service_wrapper.cmd
-echo call start_server.cmd ^> service_wrapper.log >> service_wrapper.cmd
+echo ^@echo off> service_wrapper.cmd
+echo pushd "%~dp0">> service_wrapper.cmd
+echo call start_server.cmd^> service_wrapper.log >> service_wrapper.cmd
 goto :eof
 
 
 :createremoveservice
 echo [1m[33mCreating service_remove.cmd script[0m
-echo ^@echo off > service_remove.cmd
-echo sc stop MiscreatedServer01 >> service_remove.cmd
-echo sc.exe delete MiscreatedServer01 >> service_remove.cmd
+echo ^@echo off> service_remove.cmd
+echo sc stop MiscreatedServer01>> service_remove.cmd
+echo sc.exe delete MiscreatedServer01>> service_remove.cmd
 goto :eof
 
 
