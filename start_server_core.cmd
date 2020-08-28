@@ -451,7 +451,7 @@ if exist "%VARIABLESDIR%\maxplayers.txt" (
   set /p MAXPLAYERS=<"%VARIABLESDIR%\maxplayers.txt"
   set SPACER=0
 ) else (
-  set /p MAXPLAYERS="Enter the maximum number of players [1-50, default 36]: " || set MAXPLAYERS=36
+  set /p MAXPLAYERS="Enter the maximum number of players [1-64, default 36]: " || set MAXPLAYERS=36
 )
 
 SET "var="&for /f "delims=0123456789" %%i in ("%MAXPLAYERS%") do set var=%%i
@@ -469,9 +469,9 @@ if %MAXPLAYERS% lss 1 (
   goto setmaxplayers
 )
 
-if %MAXPLAYERS% gtr 50 (
+if %MAXPLAYERS% gtr 64 (
   echo.
-  echo The entered value must be no more than 50
+  echo The entered value must be no more than 64
   if exist "%VARIABLESDIR%\maxplayers.txt" del "%VARIABLESDIR%\maxplayers.txt"
   goto setmaxplayers
 )
