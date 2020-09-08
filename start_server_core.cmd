@@ -445,13 +445,15 @@ goto :eof
 
 :setmaxplayers
 echo [1m[33mLoading max players setting...[0m
+set SERVERMAXPL=75
+set SERVERDEFAULTPL=36
 set SPACER=1
 
 if exist "%VARIABLESDIR%\maxplayers.txt" (
   set /p MAXPLAYERS=<"%VARIABLESDIR%\maxplayers.txt"
   set SPACER=0
 ) else (
-  set /p MAXPLAYERS="Enter the maximum number of players [1-64, default 36]: " || set MAXPLAYERS=36
+  set /p MAXPLAYERS="Enter the maximum number of players [1-%SERVERMAXPL%, default %SERVERDEFAULTPL%]: " || set MAXPLAYERS=%SERVERDEFAULTPL%
 )
 
 SET "var="&for /f "delims=0123456789" %%i in ("%MAXPLAYERS%") do set var=%%i
@@ -469,9 +471,9 @@ if %MAXPLAYERS% lss 1 (
   goto setmaxplayers
 )
 
-if %MAXPLAYERS% gtr 64 (
+if %MAXPLAYERS% gtr %SERVERMAXPL% (
   echo.
-  echo The entered value must be no more than 64
+  echo The entered value must be no more than %SERVERMAXPL%
   if exist "%VARIABLESDIR%\maxplayers.txt" del "%VARIABLESDIR%\maxplayers.txt"
   goto setmaxplayers
 )
