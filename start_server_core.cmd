@@ -445,7 +445,7 @@ goto :eof
 
 :setmaxplayers
 echo [1m[33mLoading max players setting...[0m
-set SERVERMAXPL=75
+set SERVERMAXPL=100
 set SERVERDEFAULTPL=36
 set SPACER=1
 
