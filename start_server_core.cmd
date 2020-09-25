@@ -157,7 +157,7 @@ goto :eof
 :grantallguides
 echo [1m[33mGranting crafting guides to all players[0m
 echo DROP TRIGGER IF EXISTS grant_all_guides;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
-echo CREATE TRIGGER IF NOT EXISTS grant_all_guides AFTER UPDATE ON Characters BEGIN UPDATE ServerAccountData SET Guide00="-543162881", Guide01="1"; END; UPDATE ServerAccountData SET Guide00="-543162881", Guide01="1";|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
+echo CREATE TRIGGER IF NOT EXISTS grant_all_guides AFTER UPDATE ON Characters BEGIN UPDATE ServerAccountData SET Guide00="-536871425", Guide01="1"; END; UPDATE ServerAccountData SET Guide00="-536871425", Guide01="1";|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
 goto :eof
 
 
