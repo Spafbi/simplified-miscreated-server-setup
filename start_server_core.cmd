@@ -373,7 +373,8 @@ if exist "%VARIABLESDIR%\enableupnp.txt" (
   echo To allow your server to be found in the game server browser you need to open
   echo firewall ports. Would like for firewall ports to be automatically forwarded?
   echo Enter Y for yes, N for no.
-  set /p ENABLEUPNP="Enable UPnP [Y/N, default Y]: " || set ENABLEUPNP=y
+  echo NOTE: You can try using UPnP, but it doesn't work for most users.
+  set /p ENABLEUPNP="Enable UPnP [Y/N, default N]: " || set ENABLEUPNP=n
 )
 
 if /I "%ENABLEUPNP%"=="y" (
