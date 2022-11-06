@@ -547,7 +547,6 @@ if not exist "%VARIABLESDIR%" (
   echo.
 )
 call :setservername
-call :setfirewall
 call :setwhitelisted
 
 set WLOPTION=
