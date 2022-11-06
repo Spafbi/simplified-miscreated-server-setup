@@ -49,11 +49,11 @@ goto start
 
 
 :start
-if not exist %TARGETSCRIPT% (
+if not exist %CORESCRIPT% (
   echo ERROR: %CORESCRIPT% was not found.
   exit /b
 )
-call %TARGETSCRIPT%
+call %CORESCRIPT%
 
 if exist "stop.txt" (
   echo INFO: File "stop.txt" exists. Remove "stop.txt" file if you want the Miscreated Server to restart.
