@@ -83,14 +83,13 @@ goto :eof
 :getsqlite3
 echo [1m[33mDownloading SQLite3 binaries[0m
 set SQLITEVERSION=3390400
-set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win32-x86-%SQLITEVERSION%.zip
+set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win64-x64-%SQLITEVERSION%.zip
 set SQLITEBINZIP=%BASEPATH%\sqlite-tools-win32-x86-%SQLITEVERSION%.zip
 
-curl -L https://sqlite.org/2022/sqlite-dll-win32-x64-%SQLITEVERSION%.zip -o "%SQLITELIBZIP%"
+curl -L https://sqlite.org/2022/sqlite-dll-win64-x64-%SQLITEVERSION%.zip -o "%SQLITELIBZIP%"
 curl -L https://sqlite.org/2022/sqlite-tools-win32-x86-%SQLITEVERSION%.zip -o "%SQLITEBINZIP%"
-
-powershell Expand-Archive -Force -LiteralPath '%SQLITELIBZIP%' -DestinationPath '%SQLITEPATH%'
-powershell Expand-Archive -Force -LiteralPath '%SQLITEBINZIP%' -DestinationPath '%SQLITEPATH%'
+powershell Expand-Archive -LiteralPath '%SQLITELIBZIP%' -DestinationPath '%SQLITEPATH%' -Force 
+powershell Expand-Archive -LiteralPath '%SQLITEBINZIP%' -DestinationPath '%SQLITEPATH%' -Force 
 
 echo Moving downloaded executables...
 move "%SQLITEPATH%\sqlite-tools-win32-x86-%SQLITEVERSION%\*.*" "%SQLITEPATH%\"
@@ -158,14 +157,10 @@ goto :eof
 echo.
 echo.
 echo ══════════════════════════════════════════════════════════════════════════════
-echo                       Map: [1m[36m%MAPNAME%[0m
 echo                Servername: [1m[36m%SERVERNAME%[0m
+echo                       Map: [1m[36m%MAPNAME%[0m
 echo               Max players: [1m[36m%MAXPLAYERS%[0m
-echo          Base server port: [1m[36m%GAMEPORTA%[0m
 echo.
-echo [1m[31mNOTICE:[0m Your RCON port is: [1m[36m%RCONPORT%[0m
-echo.
-
 if /I "%GRANTGUIDES%"=="y" (
   echo  ► Guides [1m[33mwill be granted[0m to all players
 ) else if /I "%GRANTGUIDES%"=="n" (
@@ -186,6 +181,18 @@ if /I "%WHITELISTED%"=="y" (
 ) else (
   echo  ► The server [1m[33mwill not be whitelisted[0m
 )
+echo.
+echo [1m[31mNOTICE:[0m These game server ports must be forwarded as UDP from your router to
+echo [1m[31m       [0m your server's internal IP address in order for the server to appear 
+echo [1m[31m       [0m in the server browser:
+echo [1m[31m       [0m        [1m[36m%GAMEPORTA%[0m, [1m[36m%GAMEPORTB%[0m, [1m[36m%GAMEPORTC%[0m, [1m[36m%GAMEPORTD%[0m
+echo.
+echo [1m[31m       [0m The following RCON port should be forwarded as TCP only if you want
+echo [1m[31m       [0m RCON to be accessible outside of your network.
+echo [1m[31m       [0m Your RCON port is: [1m[36m%RCONPORT%[0m
+echo.
+echo [1m[31m       [0m If your server does not appear in the server browser, the game ports
+echo [1m[31m       [0m are not properly forwarded, or are otherwise being blocked.
 echo ══════════════════════════════════════════════════════════════════════════════
 echo.
 echo.
