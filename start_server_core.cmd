@@ -82,18 +82,19 @@ goto :eof
 
 :getsqlite3
 echo [1m[33mDownloading SQLite3 binaries[0m
-set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win32-x86-3280000.zip
-set SQLITEBINZIP=%BASEPATH%\sqlite-tools-win32-x86-3280000.zip
+set SQLITEVERSION=3390400
+set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win32-x86-%SQLITEVERSION%.zip
+set SQLITEBINZIP=%BASEPATH%\sqlite-tools-win32-x86-%SQLITEVERSION%.zip
 
-curl -L https://sqlite.org/2022/sqlite-dll-win64-x64-3390400.zip -o "%SQLITELIBZIP%"
-curl -L https://sqlite.org/2022/sqlite-tools-win32-x86-3390400.zip -o "%SQLITEBINZIP%"
+curl -L https://sqlite.org/2022/sqlite-dll-win32-x64-%SQLITEVERSION%.zip -o "%SQLITELIBZIP%"
+curl -L https://sqlite.org/2022/sqlite-tools-win32-x86-%SQLITEVERSION%.zip -o "%SQLITEBINZIP%"
 
-powershell Expand-Archive -LiteralPath '%SQLITELIBZIP%' -DestinationPath '%SQLITEPATH%'
-powershell Expand-Archive -LiteralPath '%SQLITEBINZIP%' -DestinationPath '%SQLITEPATH%'
+powershell Expand-Archive -Force -LiteralPath '%SQLITELIBZIP%' -DestinationPath '%SQLITEPATH%'
+powershell Expand-Archive -Force -LiteralPath '%SQLITEBINZIP%' -DestinationPath '%SQLITEPATH%'
 
 echo Moving downloaded executables...
-move "%SQLITEPATH%\sqlite-tools-win32-x86-3280000\*.*" "%SQLITEPATH%\"
-rmdir "%SQLITEPATH%\sqlite-tools-win32-x86-3280000"
+move "%SQLITEPATH%\sqlite-tools-win32-x86-%SQLITEVERSION%\*.*" "%SQLITEPATH%\"
+rmdir "%SQLITEPATH%\sqlite-tools-win32-x86-%SQLITEVERSION%"
 
 echo Removing downloaded zip files...
 del /q *.zip
