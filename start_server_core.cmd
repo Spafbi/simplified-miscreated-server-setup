@@ -85,8 +85,8 @@ echo [1m[33mDownloading SQLite3 binaries[0m
 set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win32-x86-3280000.zip
 set SQLITEBINZIP=%BASEPATH%\sqlite-tools-win32-x86-3280000.zip
 
-curl -L https://sqlite.org/2019/sqlite-dll-win32-x86-3280000.zip -o "%SQLITELIBZIP%"
-curl -L https://sqlite.org/2019/sqlite-tools-win32-x86-3280000.zip -o "%SQLITEBINZIP%"
+curl -L https://sqlite.org/2022/sqlite-dll-win64-x64-3390400.zip -o "%SQLITELIBZIP%"
+curl -L https://sqlite.org/2022/sqlite-tools-win32-x86-3390400.zip -o "%SQLITEBINZIP%"
 
 powershell Expand-Archive -LiteralPath '%SQLITELIBZIP%' -DestinationPath '%SQLITEPATH%'
 powershell Expand-Archive -LiteralPath '%SQLITEBINZIP%' -DestinationPath '%SQLITEPATH%'
