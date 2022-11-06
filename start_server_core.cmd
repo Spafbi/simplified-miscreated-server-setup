@@ -80,22 +80,6 @@ echo sc.exe delete MiscreatedServer01>> service_remove.cmd
 goto :eof
 
 
-:createmanualremoveupnpscript
-echo [1m[33mCreating firewall UPnP settings manual removal script[0m
-@echo off
-echo @echo off> remove_upnp.cmd
-echo echo ### UPnP BEFORE ###>> remove_upnp.cmd
-echo upnpc\upnpc-shared.exe -L>> remove_upnp.cmd
-echo echo Removing RCON mapping...>> remove_upnp.cmd
-echo upnpc\upnpc-shared.exe -N %RCONPORT% %RCONPORT% TCP>> remove_upnp.cmd
-echo echo Removing Miscreated UDP port mappings...>> remove_upnp.cmd
-echo upnpc\upnpc-shared.exe -N %GAMEPORTA% %GAMEPORTD% UDP>> remove_upnp.cmd
-echo echo ### UPnP AFTER ###>> remove_upnp.cmd
-echo upnpc\upnpc-shared.exe -L>> remove_upnp.cmd
-echo pause>> remove_upnp.cmd
-goto :eof
-
-
 :getsqlite3
 echo [1m[33mDownloading SQLite3 binaries[0m
 set SQLITELIBZIP=%BASEPATH%\sqlite-dll-win32-x86-3280000.zip
@@ -134,20 +118,6 @@ set STEAMARCHIVE=%BASEPATH%\steamcmd.zip
 echo curl -L https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -o "%STEAMARCHIVE%"
 curl -L https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -o "%STEAMARCHIVE%"
 powershell Expand-Archive -LiteralPath '%STEAMARCHIVE%' -DestinationPath '%STEAMCMDPATH%'
-
-echo Removing downloaded zip files...
-del /q *.zip
-goto :eof
-
-
-:getupnphelper
-echo [1m[33mGrabbing the UPnP helper[0m
-set UPNPCARCHIVE=%BASEPATH%\upnpc.zip
-set UPNPURL=https://github.com/miniupnp/miniupnp/releases/download/miniupnpc_2_1/win32-miniupnpc-2.1.zip
-
-curl -L %UPNPURL% -o "%UPNPCARCHIVE%"
-
-powershell Expand-Archive -LiteralPath '%UPNPCARCHIVE%' -DestinationPath '%UNPNCHELPER%'
 
 echo Removing downloaded zip files...
 del /q *.zip
@@ -209,12 +179,6 @@ if /I "%BUILDRULE%"=="0" (
   echo  ► Base building is [1m[33menabled[0m[1m[33m: [0[36mbuild-anywhere[0m
 )
 
-if /I "%ENABLEUPNP%"=="y" (
-  echo  ► Firewall ports [1m[33mwill be forwarded[0m
-) else if /I "%ENABLEUPNP%"=="n" (
-  echo  ► Firewall ports [1m[33mwill not be automatically forwarded[0m
-)
-
 if /I "%WHITELISTED%"=="y" (
   echo  ► The server [1m[33mwill be whitelisted[0m
   echo  ► You will need to add your Steam64ID to the whitelist before joining the server
@@ -230,13 +194,6 @@ goto :eof
 :removegrantallguides
 echo [1m[33mRemoving grant_all_guides database trigger[0m
 echo DROP TRIGGER IF EXISTS grant_all_guides;|"%SQLITEBIN%" "%SERVERDIR%\miscreated.db"
-goto :eof
-
-
-:removeupnp
-echo [1m[33mRemoving firewall UPnP entries[0m
-"%UNPNCHELPER%\upnpc-shared.exe" -N %RCONPORT% %RCONPORT% TCP >nul
-"%UNPNCHELPER%\upnpc-shared.exe" -N %GAMEPORTA% %GAMEPORTD% UDP >nul
 goto :eof
 
 
@@ -358,38 +315,6 @@ if exist "%VARIABLESDIR%\bind.txt" (
 ) else (
   BIND=0
 )
-
-goto :eof
-
-
-:setfirewall
-echo [1m[33mLoading firewall setting...[0m
-set SPACER=1
-
-if exist "%VARIABLESDIR%\enableupnp.txt" (
-  set /p ENABLEUPNP=<"%VARIABLESDIR%\enableupnp.txt"
-  set SPACER=0
-) else (
-  echo To allow your server to be found in the game server browser you need to open
-  echo firewall ports. Would like for firewall ports to be automatically forwarded?
-  echo Enter Y for yes, N for no.
-  echo NOTE: You can try using UPnP, but it doesn't work for most users.
-  set /p ENABLEUPNP="Enable UPnP [Y/N, default N]: " || set ENABLEUPNP=n
-)
-
-if /I "%ENABLEUPNP%"=="y" (
-  echo ^%ENABLEUPNP%>"%VARIABLESDIR%\enableupnp.txt"
-) else if /I "%ENABLEUPNP%"=="n" (
-  echo ^%ENABLEUPNP%>"%VARIABLESDIR%\enableupnp.txt"
-) else (
-  echo.
-  echo Please enter Y for yes, or N for no.
-  echo.
-  if exist "%VARIABLESDIR%\enableupnp.txt" del "%VARIABLESDIR%\enableupnp.txt"
-  goto setfirewall
-)
-
-if "%SPACER%" == "1" echo.
 
 goto :eof
 
@@ -538,13 +463,6 @@ if "%SPACER%" == "1" echo.
 goto :eof
 
 
-:setupnp
-echo [1m[33mCreating firewall UPnP entries[0m
-"%UNPNCHELPER%\upnpc-shared.exe" -e MiscreatedServer_%GAMEPORTA% -r %GAMEPORTA% UDP %GAMEPORTB% UDP %GAMEPORTC% UDP %GAMEPORTD% UDP %RCONPORT% TCP >nul
-echo.
-goto :eof
-
-
 :setwhitelisted
 echo [1m[33mLoading whitelisting setting...[0m
 set SPACER=1
@@ -581,8 +499,6 @@ if /I "%GRANTGUIDES%"=="y" (
   )
 )
 
-if /I "%ENABLEUPNP%"=="y" call :setupnp
-
 echo Would you like to validate or update the server files? 'Y' recommended.
 echo   ^( auto-validation will commence in 10 seconds ^)
 CHOICE /C YN /D Y /T 10 /M "Validate and/or update the server?"
@@ -600,11 +516,8 @@ goto :eof
 :startserver
 echo [1m[33mStarting the Miscreated server[0m
 echo |set /p="[1m[33m  command: [0m"
-echo [1m[36m"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +sv_servername "%SERVERNAME%" +http_startserver[0m
-"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +sv_servername "%SERVERNAME%" +http_startserver
-if /I "%ENABLEUPNP%"=="y" (
-  call :removeupnp
-)
+echo [1m[36m"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +http_startserver[0m
+"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +http_startserver
 echo.
 goto :eof
 
@@ -693,14 +606,6 @@ if not exist "%SQLITEPATH%" (
 
 if not exist "%SQLITEBIN%" call :getsqlite3
 
-set UNPNCHELPER=%BASEPATH%\upnpc
-if not exist "%UNPNCHELPER%" (
-  echo Creating directory: "%UNPNCHELPER%"...
-  md "%UNPNCHELPER%"
-  echo.
-  call :getupnphelper
-)
-
 set OPTIONS=%WLOPTION%
 
 if /I NOT "%BIND%"=="" (
@@ -714,8 +619,6 @@ if /I NOT "%BIND%"=="" (
 if defined OPTIONS (
   echo Additional command line options: %OPTIONS%
 )
-
-call :createmanualremoveupnpscript
 
 if /I "%GRANTGUIDES%"=="n" (
   if exist "%SERVERDIR%\miscreated.db" call :removegrantallguides
