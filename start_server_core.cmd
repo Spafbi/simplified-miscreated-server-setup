@@ -522,6 +522,9 @@ goto :eof
 
 
 :startserver
+REM - This may help to fend off some types of DDoS attacks
+set STEAM_GAMESERVER_A2S_INFO_REQUIRE_CHALLENGE=1
+set STEAM_GAMESERVER_RATE_LIMIT_200MS=50
 echo [1m[33mStarting the Miscreated server[0m
 echo |set /p="[1m[33m  command: [0m"
 echo [1m[36m"%MISSERVERBIN%" %OPTIONS% -sv_port %GAMEPORTA% -mis_gameserverid %SERVERID% +sv_maxplayers %MAXPLAYERS% +map %MAPNAME% +http_startserver[0m
