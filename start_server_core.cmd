@@ -7,6 +7,7 @@ setlocal EnableDelayedExpansion
 REM - This grabs and parses the directory in which this CMD file exists.
 set BASEPATH=%~dp0
 set BASEPATH=%BASEPATH:~0,-1%
+
 goto main
 
 
