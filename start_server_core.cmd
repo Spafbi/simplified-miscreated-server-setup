@@ -7,7 +7,9 @@ setlocal EnableDelayedExpansion
 REM - This grabs and parses the directory in which this CMD file exists.
 set BASEPATH=%~dp0
 set BASEPATH=%BASEPATH:~0,-1%
-
+REM - This may help to fend off some types of DDoS attacks
+set STEAM_GAMESERVER_A2S_INFO_REQUIRE_CHALLENGE=1
+set STEAM_GAMESERVER_RATE_LIMIT_200MS=50
 goto main
 
 
